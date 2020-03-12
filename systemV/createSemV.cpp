@@ -39,7 +39,7 @@ main(int argc, const char *argv[]) {
 
   arg.val = 0;
 
-  if (argc != 3) {
+  if (argc == 3) {
     string val = argv[2];
     arg.val = stoi(val);
   }

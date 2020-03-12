@@ -1,4 +1,4 @@
-EXECS=createSemV deleteSemV waitForSig sendASig
+EXECS=createSemV deleteSemV waitForSig sendASig useResource mutex
 
 all: $(EXECS)
 
@@ -21,6 +21,11 @@ sendASig: sendASig.o
 	$(CXX) -o $@ $^
 
 sendASig.o: sendASig.cpp
+
+mutex: mutex.o
+	$(CXX) -o $@ $^
+
+mutex.o: mutex.cpp
 
 clean:
 	rm -f *.o
