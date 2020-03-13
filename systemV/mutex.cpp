@@ -13,10 +13,13 @@
 
 using namespace std;
 
-const int BUFFER_SIZE = 4096;
+const int BUFFER_SIZE = 8192;
 
 void fillBuffer(char *buffer, const char c, const int size);
 void processingChild(const char c, int sem);
+static int semOp(int sem, int value);
+int wait(int sem);
+int signal(int sem);
 
 int
 main(int argc, const char *argv[]) {
@@ -35,6 +38,13 @@ main(int argc, const char *argv[]) {
   union semun arg;
 
   arg.val = 1;
+
+  if (semctl(mutex, 0, SETVAL, arg) == -1) {
+    cerr << "Error setting value for semaphore " << mutex
+	 << " error: " << errno << " "
+	 << strerror(errno) << endl;
+    _exit(EXIT_FAILURE);
+  }
 
   pid_t child1;
   pid_t child2;
@@ -71,10 +81,45 @@ void fillBuffer(char *buffer, const char c, const int size) {
   buffer[size-1] = '\0';
 }
 
-void processingChild(const char c, int sem) {
+void processingChild(const char c, int mutex) {
   char *buffer = new char[BUFFER_SIZE];
 
   fillBuffer(buffer, c, BUFFER_SIZE);
 
-  for (;;) cout << buffer << endl;
+  for (;;) {
+
+    if (wait(mutex) == -1) {
+      cerr << "Error operating over semaphore " << mutex
+	   << " error: " << errno << " "
+	   << strerror(errno) << endl;
+      _exit(EXIT_FAILURE);
+    }
+
+    cout << buffer;
+
+    if (signal(mutex) == -1) {
+      cerr << "Error operating over semaphore " << mutex
+	   << " error: " << errno << " "
+	   << strerror(errno) << endl;
+	_exit(EXIT_FAILURE);
+    }
+  }
+}
+
+int semOp(int sem, int value) {
+  struct sembuf semCtrl;
+
+  semCtrl.sem_num = 0;
+  semCtrl.sem_op  = value;
+  semCtrl.sem_flg = 0;
+
+  return semop(sem, &semCtrl, 1);
+}
+
+int wait(int sem) {
+  return semOp(sem, -1);
+}
+
+int signal(int sem) {
+  return semOp(sem, 1);
 }
