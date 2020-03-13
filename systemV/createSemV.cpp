@@ -36,7 +36,6 @@ main(int argc, const char *argv[]) {
   }
 
   union semun arg;
-
   arg.val = 0;
 
   if (argc == 3) {

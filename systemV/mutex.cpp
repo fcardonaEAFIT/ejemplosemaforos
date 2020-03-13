@@ -21,10 +21,10 @@ void processingChild(const char c, int sem);
 int
 main(int argc, const char *argv[]) {
 
-  int sem;
+  int mutex;
 
-  if ((sem = semget(IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL
-		    | S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)) == -1) {
+  if ((mutex = semget(IPC_PRIVATE, 1, IPC_CREAT | IPC_EXCL
+		      | S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP)) == -1) {
 
     cerr << "Error openning PRIVATE semaphore "
 	 << " error: " << errno << " "
@@ -38,14 +38,14 @@ main(int argc, const char *argv[]) {
 
   pid_t child1;
   pid_t child2;
-  
-  if ((child1 = fork()) = 0) { // First child
-    processingChild('a', sem);
+
+  if ((child1 = fork()) == 0) { // First child
+    processingChild('a', mutex);
   }
   else {
 
-    if ((child2 = fork()) = 0) { // Second child
-      processingChild('X', sem);
+    if ((child2 = fork()) == 0) { // Second child
+      processingChild('X', mutex);
     }
   }
 
@@ -53,7 +53,7 @@ main(int argc, const char *argv[]) {
 
   waitpid(child1, &status, 0);
   waitpid(child2, &status, 0);
-  
+
   return EXIT_SUCCESS;
 }
 
@@ -73,8 +73,8 @@ void fillBuffer(char *buffer, const char c, const int size) {
 
 void processingChild(const char c, int sem) {
   char *buffer = new char[BUFFER_SIZE];
-  
+
   fillBuffer(buffer, c, BUFFER_SIZE);
-  
+
   for (;;) cout << buffer << endl;
 }
