@@ -1,13 +1,20 @@
-all: crearSemaforos agente smoker destroySem
+EXEC=crearSemaforos agente smoker destroySem
+LDFLAGS=-pthread
+all: $(EXEC)
 
 crearSemaforos: crearSemaforos.o
-	$(CXX) -o $@ $^ -pthread
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
 agente: agente.o
-	$(CXX) -o $@ $^ -pthread
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
 smoker: smoker.o
-	$(CXX) -o $@ $^ -pthread
+	$(CXX) -o $@ $^ $(LDFLAGS)
 
 destroySem: destroySem.o
-	$(CXX) -o $@ $^ -pthread
+	$(CXX) -o $@ $^ $(LDFLAGS)
+
+clean:
+	rm -f *.o
+	rm -f *.*~ *~
+	rm -f $(EXEC)
