@@ -3,7 +3,6 @@
 #include <sys/sem.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include "semun.h"
 #include <cstring>
 #include <cerrno>
 #include <cstdlib>
