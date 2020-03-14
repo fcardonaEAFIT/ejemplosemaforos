@@ -1,5 +1,5 @@
 LDFLAGS=-pthread
-EXECS=createSemP deleteSemV waitForSig sendASig useResource mutex
+EXECS=createSemP deleteSemP waitForSig sendASig useResource mutex
 
 all: $(EXECS)
 
@@ -8,10 +8,10 @@ createSemP: createSemP.o
 
 createSemP.o: createSemP.cpp
 
-deleteSemV: deleteSemV.o
-	$(CXX) -o $@ $^
+deleteSemP: deleteSemP.o
+	$(CXX) -o $@ $^ ${LDFLAGS}
 
-deleteSemV.o: deleteSemV.cpp
+deleteSemP.o: deleteSemP.cpp
 
 waitForSig: waitForSig.o
 	$(CXX) -o $@ $^ ${LDFLAGS}
