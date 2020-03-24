@@ -54,6 +54,6 @@ main(int argc, const char *argv[]) {
 }
 
 void usage(const char *program) {
-  cerr << "Usage: " << program << " <semkey>" << endl;
+  cerr << "Usage: " << program << " <semkey> [value]" << endl;
   _exit(EXIT_FAILURE);
 }
