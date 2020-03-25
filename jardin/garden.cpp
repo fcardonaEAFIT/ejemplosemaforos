@@ -20,11 +20,12 @@ void waiting();
 class Garden {
 public:
   Garden();
-  int getPersons() const;
+  int getPersons();
   void enter();
   void leave();
 private:
   int npersons;
+  sem_t mutex;
 };
 
 int
@@ -92,19 +93,28 @@ usage(const char *program) {
 }
 
 
-Garden::Garden() : npersons(0) { }
+Garden::Garden() : npersons(0) {
+  sem_init(&mutex, 0, 1);
+}
 
 int
-Garden::getPersons() const {
+Garden::getPersons() {
+  sem_wait(&mutex);
+  int temp = npersons;
+  sem_post(&mutex);
   return npersons;
 }
 
 void
 Garden::enter() {
+  sem_wait(&mutex);
   npersons++;
+  sem_post(&mutex);
 }
 
 void
 Garden::leave() {
+  sem_wait(&mutex);
   npersons--;
+  sem_post(&mutex);
 }
