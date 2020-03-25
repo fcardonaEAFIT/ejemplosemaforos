@@ -20,11 +20,11 @@ void waiting();
 class Garden {
 public:
   Garden();
-  int getPersons();
+  int getPeople();
   void enter();
   void leave();
 private:
-  int npersons;
+  int npeople;
   sem_t mutex;
 };
 
@@ -35,16 +35,16 @@ main(int argc, char *argv[]) {
     usage(argv[0]);
 
   Garden garden;
-  string sPersons = argv[1];
-  int nPersons = stoi(sPersons);
+  string sPeople = argv[1];
+  int nPeople = stoi(sPeople);
 
-  pthread_t person_threads[nPersons];
+  pthread_t person_threads[nPeople];
   pthread_t admin_thread;
 
   pthread_create(&admin_thread, NULL,
 		admin, (void *) &garden);
 
-  for (int i = 0; i < nPersons; i++) {
+  for (int i = 0; i < nPeople; i++) {
 
     pthread_create(&person_threads[i], NULL,
 		   person, (void *) &garden);
@@ -61,7 +61,7 @@ person(void *arg) {
   Garden* garden = (Garden*) arg;
 
   for (;;) {
-    cout << "Leaving a live" << endl;
+    cout << "Living a life" << endl;
     waiting();
     cout << "Entering" << endl;
     garden->enter();
@@ -77,7 +77,7 @@ admin(void *arg) {
 
   for(;;) {
     waiting();
-    cout << garden->getPersons() << endl;
+    cout << garden->getPeople() << endl;
   }
 }
 
@@ -88,33 +88,33 @@ waiting() {
 
 void
 usage(const char *program) {
-  cerr << "Usage: " << program << " nPersons" << endl;
+  cerr << "Usage: " << program << " nPeople" << endl;
   _exit(EXIT_FAILURE);
 }
 
 
-Garden::Garden() : npersons(0) {
+Garden::Garden() : npeople(0) {
   sem_init(&mutex, 0, 1);
 }
 
 int
-Garden::getPersons() {
+Garden::getPeople() {
   sem_wait(&mutex);
-  int temp = npersons;
+  int temp = npeople;
   sem_post(&mutex);
-  return npersons;
+  return npeople;
 }
 
 void
 Garden::enter() {
   sem_wait(&mutex);
-  npersons++;
+  npeople++;
   sem_post(&mutex);
 }
 
 void
 Garden::leave() {
   sem_wait(&mutex);
-  npersons--;
+  npeople--;
   sem_post(&mutex);
 }
