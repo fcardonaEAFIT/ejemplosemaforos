@@ -101,8 +101,10 @@ Garden::getPersons() const {
 
 void
 Garden::enter() {
+  npersons++;
 }
 
 void
 Garden::leave() {
+  npersons--;
 }
