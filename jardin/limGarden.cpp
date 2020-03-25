@@ -19,24 +19,29 @@ void waiting();
 
 class Garden {
 public:
-  Garden();
+  Garden(int max);
   int getPersons();
   void enter();
   void leave();
 private:
   int npersons;
   sem_t mutex;
+  sem_t sMax;
 };
 
 int
 main(int argc, char *argv[]) {
 
-  if (argc != 2)
+  if (argc != 3)
     usage(argv[0]);
 
-  Garden garden;
   string sPersons = argv[1];
   int nPersons = stoi(sPersons);
+  string sMax = argv[2];
+  int nMax = stoi(sMax);
+
+  Garden garden(nMax);
+  
 
   pthread_t person_threads[nPersons];
   pthread_t admin_thread;
@@ -88,13 +93,14 @@ waiting() {
 
 void
 usage(const char *program) {
-  cerr << "Usage: " << program << " nPersons" << endl;
+  cerr << "Usage: " << program << " nPersons maxPersonas" << endl;
   _exit(EXIT_FAILURE);
 }
 
 
-Garden::Garden() : npersons(0) {
+Garden::Garden(int max) : npersons(0) {
   sem_init(&mutex, 0, 1);
+  sem_init(&sMax, 0, max);
 }
 
 int
@@ -107,6 +113,7 @@ Garden::getPersons() {
 
 void
 Garden::enter() {
+  sem_wait(&sMax);
   sem_wait(&mutex);
   npersons++;
   sem_post(&mutex);
@@ -117,4 +124,5 @@ Garden::leave() {
   sem_wait(&mutex);
   npersons--;
   sem_post(&mutex);
+  sem_post(&sMax);
 }
